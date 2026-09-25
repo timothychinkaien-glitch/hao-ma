@@ -1,0 +1,11 @@
+{
+  "name": "CSI Sentinel",
+  "short_name": "CSI Sentinel",
+  "description": "Live ESP32 Wi-Fi CSI monitoring",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07151b",
+  "theme_color": "#07151b",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
+
