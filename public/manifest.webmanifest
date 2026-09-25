@@ -1,11 +1,11 @@
 {
-  "name": "CSI Sentinel",
-  "short_name": "CSI Sentinel",
-  "description": "Live ESP32 Wi-Fi CSI monitoring",
+  "name": "Hao Ma?",
+  "short_name": "Hao Ma?",
+  "description": "A gentle home safety check-in",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#07151b",
-  "theme_color": "#07151b",
+  "background_color": "#fff7f0",
+  "theme_color": "#c94f49",
   "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }
 
