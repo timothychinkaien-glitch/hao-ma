@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-const SAMPLE = { deviceId: 'Home safety monitor', timestamp: new Date().toISOString(), motionScore: 28, anomalyScore: 14 };
+const SAMPLE = { deviceId: 'Hao Ma? monitor', timestamp: new Date().toISOString(), motionScore: 28, anomalyScore: 14 };
 const DEFAULTS = { baseUrl: '', interval: 3000, motionThreshold: 70, anomalyThreshold: 65 };
 const saved = JSON.parse(localStorage.getItem('csi-settings') || '{}');
 
@@ -10,7 +10,7 @@ function normalise(raw) {
   const packet = raw?.data || raw;
   const metrics = packet.metrics || {};
   return {
-    deviceId: packet.deviceId || packet.device_id || 'Home safety monitor',
+    deviceId: packet.deviceId || packet.device_id || 'Hao Ma? monitor',
     timestamp: packet.timestamp || packet.time || new Date().toISOString(),
     motionScore: Number(packet.motionScore ?? packet.motion_score ?? metrics.motion ?? 0),
     anomalyScore: Number(packet.anomalyScore ?? packet.anomaly_score ?? metrics.anomaly ?? 0),
@@ -64,7 +64,7 @@ function App() {
     const type = packet.motionScore >= settings.motionThreshold ? 'motion' : 'anomaly';
     const key = `${packet.deviceId}:${type}`;
     if (state === 'live' && permission === 'granted' && lastAlert.current !== key) {
-      sendPhoneNotification('Safety monitor alert', 'Your monitor noticed a change. Please check in.');
+      sendPhoneNotification('Hao Ma? check-in', 'Your monitor noticed a change. Please check in.');
       lastAlert.current = key;
     }
   }, [alerting, simulatedAlert, packet.deviceId, packet.motionScore, settings.motionThreshold, state, permission]);
@@ -83,22 +83,22 @@ function App() {
     setPendingTest(true);
     testTimer.current = setTimeout(() => {
       setPendingTest(false); setSimulatedAlert(true);
-      sendPhoneNotification('Practice safety alert', 'This is a test. Your home safety monitor is working.');
+      sendPhoneNotification('Hao Ma? practice alert', 'This is a test. Hao Ma? is working.');
     }, 5000);
   };
   const seenAt = updated || (state === 'demo' ? new Date(packet.timestamp) : null);
   const status = pendingTest ? 'Testing your alert' : simulatedAlert ? 'Practice alert' : realAlert ? 'Please check in' : state === 'offline' ? 'Monitor needs attention' : 'Everything looks okay';
-  const detail = pendingTest ? 'Your practice alert will arrive in 5 seconds.' : simulatedAlert ? 'This is only a test. You are safe.' : realAlert ? 'The monitor noticed a change in the room.' : state === 'offline' ? 'We cannot reach the home monitor right now.' : 'Your home safety monitor is working.';
+  const detail = pendingTest ? 'Your practice alert will arrive in 5 seconds.' : simulatedAlert ? 'This is only a test. You are safe.' : realAlert ? 'Hao Ma? noticed a change in the room.' : state === 'offline' ? 'Hao Ma? cannot reach the monitor right now.' : 'Hao Ma? is quietly keeping an eye on things.';
 
   return <main className="app">
-    {showNotificationSetup && <section className="notification-setup" role="dialog" aria-modal="true" aria-label="Turn on alerts"><div className="setup-icon" aria-hidden="true">♧</div><h1>Would you like safety alerts?</h1><p>We can send a message to this phone when the monitor notices a change.</p><button onClick={requestNotifications}>Turn on alerts</button><button className="not-now" onClick={() => setShowNotificationSetup(false)}>Not now</button></section>}
-    <header className="topbar"><div className="brand-mark" aria-hidden="true">♥</div><p>Home safety monitor</p><button className="plain-button" onClick={() => setShowSettings(!showSettings)} aria-expanded={showSettings}>Settings</button></header>
-    {showSettings && <section className="settings" aria-label="Monitor settings"><h2>Connect your monitor</h2><p>Enter the address given to you by your helper.</p><label>Laptop monitor address<input value={settings.baseUrl} onChange={(event) => change('baseUrl', event.target.value)} placeholder="http://192.168.1.20:8080" inputMode="url" /></label><label>How often to check<input type="number" min="1000" step="1000" value={settings.interval} onChange={(event) => change('interval', Number(event.target.value))} /><span>milliseconds</span></label><details><summary>Alert settings</summary><label>Movement alert level<input type="number" min="0" max="100" value={settings.motionThreshold} onChange={(event) => change('motionThreshold', Number(event.target.value))} /></label><label>Change alert level<input type="number" min="0" max="100" value={settings.anomalyThreshold} onChange={(event) => change('anomalyThreshold', Number(event.target.value))} /></label></details><button className="done-button" onClick={() => setShowSettings(false)}>Done</button></section>}
+    {showNotificationSetup && <section className="notification-setup" role="dialog" aria-modal="true" aria-label="Turn on alerts"><div className="setup-icon" aria-hidden="true">?</div><p className="greeting">HAO MA?</p><h1>Would you like a gentle check-in?</h1><p>We can send a message to this phone when Hao Ma? notices a change.</p><button onClick={requestNotifications}>Turn on alerts</button><button className="not-now" onClick={() => setShowNotificationSetup(false)}>Not now</button></section>}
+    <header className="topbar"><div className="brand-mark" aria-hidden="true">?</div><div><h1>Hao Ma?</h1><p>A gentle check-in</p></div><button className="plain-button" onClick={() => setShowSettings(!showSettings)} aria-expanded={showSettings}>Settings</button></header>
+    {showSettings && <section className="settings" aria-label="Monitor settings"><h2>Set up Hao Ma?</h2><p>Enter the address given to you by your helper.</p><label>Laptop monitor address<input value={settings.baseUrl} onChange={(event) => change('baseUrl', event.target.value)} placeholder="http://192.168.1.20:8080" inputMode="url" /></label><label>How often to check<input type="number" min="1000" step="1000" value={settings.interval} onChange={(event) => change('interval', Number(event.target.value))} /><span>milliseconds</span></label><details><summary>Alert settings</summary><label>Movement alert level<input type="number" min="0" max="100" value={settings.motionThreshold} onChange={(event) => change('motionThreshold', Number(event.target.value))} /></label><label>Change alert level<input type="number" min="0" max="100" value={settings.anomalyThreshold} onChange={(event) => change('anomalyThreshold', Number(event.target.value))} /></label></details><button className="done-button" onClick={() => setShowSettings(false)}>Done</button></section>}
     <section className={`status-card ${alerting ? 'alert' : state === 'offline' ? 'offline' : ''}`} aria-live="polite"><div className="status-symbol" aria-hidden="true">{alerting || state === 'offline' ? '!' : '✓'}</div><p className="status-label">{state === 'live' ? 'LIVE UPDATE' : state === 'demo' ? 'DEMO MODE' : 'CONNECTION CHECK'}</p><h1>{status}</h1><p className="status-detail">{detail}</p></section>
-    <section className="monitor-card"><div className="monitor-icon" aria-hidden="true">⌂</div><div><p className="small-label">MONITORING</p><h2>{packet.deviceId}</h2><p className="last-check">{seenAt ? `Last checked at ${seenAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : 'Trying to reconnect…'}</p></div><span className={`connection-dot ${state}`} aria-label={state === 'live' ? 'Connected' : state === 'offline' ? 'Offline' : 'Demo'} /></section>
+    <section className="monitor-card"><div className="monitor-icon" aria-hidden="true">⌂</div><div><p className="small-label">YOUR CHECK-IN</p><h2>{packet.deviceId}</h2><p className="last-check">{seenAt ? `Last checked at ${seenAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : 'Trying to reconnect…'}</p></div><span className={`connection-dot ${state}`} aria-label={state === 'live' ? 'Connected' : state === 'offline' ? 'Offline' : 'Demo'} /></section>
     <section className="test-card"><div><h2>Want to see an alert?</h2><p>This sends a practice notification after 5 seconds.</p></div><button onClick={runPracticeAlert}>{pendingTest ? 'Cancel test' : simulatedAlert ? 'Back to normal' : 'Try an alert'}</button></section>
-    <section className="help-card"><div><h2>Would you like alerts?</h2><p>We can show a message when the monitor notices a change.</p></div><button onClick={requestNotifications} disabled={permission === 'granted' || permission === 'unsupported'}>{permission === 'granted' ? 'Alerts are on' : 'Turn on alerts'}</button></section>
-    <p className="reassurance">You do not need to do anything while the monitor says it is okay.</p>
+    <section className="help-card"><div><h2>Let Hao Ma? keep in touch</h2><p>We can show a message when the monitor notices a change.</p></div><button onClick={requestNotifications} disabled={permission === 'granted' || permission === 'unsupported'}>{permission === 'granted' ? 'Alerts are on' : 'Turn on alerts'}</button></section>
+    <p className="reassurance">When Hao Ma? says everything is okay, you can simply carry on with your day.</p>
   </main>;
 }
 
